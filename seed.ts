@@ -16,24 +16,55 @@ app.get("/", (req, res) => {
 });
 
 app.post("/post", async (req, res) => {
-  const { title, year, duration } = req.body;
-  const result = await prisma.movie.create({
-    data: {
-      title,
-      year,
-      duration,
-    },
-  });
-  res.json(result);
+  try {
+    const { title, year, duration } = req.body;
+    const result = await prisma.movie.create({
+      data: {
+        title,
+        year,
+        duration,
+      },
+    });
+    res.json(result);
+  } catch (error) {
+    console.error(error);
+    res.send(error);
+  }
 });
 
-app.delete('/post/:id', async (req, res) => {
-    const {id}= req.params;
-    const post = await prisma.movie.delete({
-        where: {id:Number (id)}
+app.put("/post/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, year, duration } = req.body;
+    const post = await prisma.movie.update({
+      where: {
+        id: Number(id),
+      },
+      data: {
+        title,
+        year,
+        duration,
+      },
     });
-    res.json('eliminado');
-})
+    res.send(post);
+  } catch (error) {
+    console.log(error);
+    res.send(error);
+  }
+});
+
+app.delete("/post/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const post = await prisma.movie.delete({
+      where: { id: Number(id) },
+    });
+    res.json("eliminado");
+  } catch (error) {
+    console.log(error);
+    res.send(error);
+  }
+});
 
 /* 
 const newMovie = await prisma.movie.create({
